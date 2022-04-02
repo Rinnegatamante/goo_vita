@@ -86,30 +86,30 @@ void *__wrap_memset(void *s, int c, size_t n) {
 
 int debugPrintf(char *text, ...) {
 #ifdef DEBUG
-  va_list list;
-  static char string[0x8000];
+  //va_list list;
+  //static char string[0x8000];
 
-  va_start(list, text);
-  vsprintf(string, text, list);
-  va_end(list);
+  //va_start(list, text);
+  //vsprintf(string, text, list);
+  //va_end(list);
 
-  SceUID fd = sceIoOpen("ux0:data/goo_log.txt", SCE_O_WRONLY | SCE_O_CREAT | SCE_O_APPEND, 0777);
-  if (fd >= 0) {
-    sceIoWrite(fd, string, strlen(string));
-    sceIoClose(fd);
-  }
+  //SceUID fd = sceIoOpen("ux0:data/goo_log.txt", SCE_O_WRONLY | SCE_O_CREAT | SCE_O_APPEND, 0777);
+  //if (fd >= 0) {
+  //  sceIoWrite(fd, string, strlen(string));
+  //  sceIoClose(fd);
+  //}
 #endif
   return 0;
 }
 
 int __android_log_print(int prio, const char *tag, const char *fmt, ...) {
 #ifdef DEBUG
-  va_list list;
-  static char string[0x8000];
+  //va_list list;
+  //static char string[0x8000];
 
-  va_start(list, fmt);
-  vsprintf(string, fmt, list);
-  va_end(list);
+  //va_start(list, fmt);
+  //vsprintf(string, fmt, list);
+  //va_end(list);
 
   //printf("[LOG] %s: %s\n", tag, string);
 #endif
@@ -118,10 +118,10 @@ int __android_log_print(int prio, const char *tag, const char *fmt, ...) {
 
 int __android_log_vprint(int prio, const char *tag, const char *fmt, va_list list) {
 #ifdef DEBUG
-  static char string[0x8000];
+  //static char string[0x8000];
 
-  vsprintf(string, fmt, list);
-  va_end(list);
+  //vsprintf(string, fmt, list);
+  //va_end(list);
 
   //printf("[LOGV] %s: %s\n", tag, string);
 #endif
@@ -313,6 +313,7 @@ int DoesFileExistInApk(void *this, const char *file) {
 void patch_game(void) {
   hook_addr(so_symbol(&goo_mod, "__aeabi_ldiv0"), (uintptr_t)&__aeabi_ldiv0);
   hook_addr(so_symbol(&goo_mod, "_ZN3Boy14AndroidStorage18DoesFileExistInApkEPKc"), (uintptr_t)&DoesFileExistInApk);
+  hook_addr(so_symbol(&goo_mod, "_ZN3Boy18AndroidEnvironment8debugLogEPKcz"), (uintptr_t)&ret0);
 }
 
 extern void *__aeabi_atexit;
