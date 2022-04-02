@@ -719,7 +719,7 @@ void *NewGlobalRef(void *env, char *str) {
   } else {
     void *r = malloc(strlen(str) + 14);
     sprintf(r, "ux0:data/goo/%s", str);
-	return r;
+    return r;
   }
 }
 
@@ -764,7 +764,7 @@ void *CallObjectMethodV(void *env, void *obj, int methodID, uintptr_t *args) {
   case GET_INTERNAL_STORAGE_PATH:
     return DATA_PATH;
   case PLAY_SOUND:
-	return audio_player_play(args[0], args[1]);
+    return audio_player_play(args[0], args[1]);
   default:
     return NULL;
   }
@@ -783,10 +783,10 @@ void CallVoidMethodV(void *env, void *obj, int methodID, uintptr_t *args) {
   switch (methodID) {
   case STOP_SOUND:
     audio_player_stop(args[0]);
-	break;
+    break;
   case STOP_ALL_SOUNDS:
     audio_player_stop_all_sounds();
-	break;
+    break;
   default:
     break;
   }
