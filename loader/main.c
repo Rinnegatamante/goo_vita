@@ -898,8 +898,12 @@ int main(int argc, char *argv[]) {
       }
     }
     
-    Java_com_twodboy_worldofgoo_DemoRenderer_nativeRender(fake_env, 0, 0);
+    static uint32_t oldpad;
+    SceCtrlData pad;
+    sceCtrlPeekBufferPositive(0, &pad, 1);
+    Java_com_twodboy_worldofgoo_DemoRenderer_nativeRender(fake_env, 0, ((pad.buttons & SCE_CTRL_START) && !(oldpad & SCE_CTRL_START)) ? 1 : 0);
     vglSwapBuffers(GL_FALSE);
+    oldpad = pad.buttons;
   }
 
   return 0;
