@@ -8,6 +8,14 @@ The port works by loading the official Android ARMv7 executables in memory, reso
 
 ## Changelog
 
+### v1.1
+
+- Enabled VBOs usage (Less CPU load during rendering).
+- Fixed an issue causing freezes on level ends in certain circumstances.
+- Added support for other languages (Italian, Spanish, Dutch, German, Korean, Chinese, French, Polish)
+- Implemented Menu key with Start button. Now pressing it will pause the game/return to main menu from game HUB.
+- Disabled all debug loggings (Less CPU load and no waste of storage).
+
 ### v1.0
 
 - Initial release.

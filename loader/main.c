@@ -353,7 +353,15 @@ FILE *fopen_hook(char *fname, char *mode) {
   return fopen(real_fname, mode);
 }
 
+int is_pers2 = 0;
+char *save_buf;
+int save_ptr = 0;
+
 int open_hook(const char *fname, int flags) {
+  is_pers2 = strstr(fname, "pers2.dat") ? 1 : 0;
+  if (is_pers2) {
+	save_buf = (char *)malloc(0x40000);
+  }
   char real_fname[128];
   sprintf(real_fname, "%s.mp3", fname);
 
@@ -366,6 +374,30 @@ int fstat_hook(int fd, void *statbuf) {
   if (res == 0)
     *(uint64_t *)(statbuf + 0x30) = st.st_size;
   return res;
+}
+
+int write_hook(int fd, const void *buf, int count) {
+  if (is_pers2) {
+    if (count == 1) {
+      save_buf[save_ptr] = *(char *)buf;
+    } else {
+      sceClibMemcpy(&save_buf[save_ptr], buf, count);
+	}
+	save_ptr += count;
+	return count;
+  } else {
+    return write(fd, buf, count);
+  }
+}
+
+int close_hook(int fd) {
+  if (is_pers2) {
+    write(fd, save_buf, save_ptr);
+    free(save_buf);
+    is_pers2 = 0;
+	save_ptr = 0;
+  }
+  return close(fd);
 }
 
 static so_default_dynlib default_dynlib[] = {
@@ -402,7 +434,7 @@ static so_default_dynlib default_dynlib[] = {
   { "ceilf", (uintptr_t)&ceilf },
   { "clearerr", (uintptr_t)&clearerr },
   { "clock_gettime", (uintptr_t)&clock_gettime },
-  { "close", (uintptr_t)&close },
+  { "close", (uintptr_t)&close_hook },
   { "cos", (uintptr_t)&cos },
   { "cosf", (uintptr_t)&cosf },
   { "cosh", (uintptr_t)&cosh },
@@ -618,7 +650,7 @@ static so_default_dynlib default_dynlib[] = {
   { "wmemcpy", (uintptr_t)&wmemcpy },
   { "wmemmove", (uintptr_t)&wmemmove },
   { "wmemset", (uintptr_t)&wmemset },
-  { "write", (uintptr_t)&write },
+  { "write", (uintptr_t)&write_hook },
   // { "writev", (uintptr_t)&writev },
 };
 
