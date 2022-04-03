@@ -7,17 +7,7 @@
  * of the MIT license.  See the LICENSE file for details.
  */
 
-#include <psp2/io/dirent.h>
-#include <psp2/io/fcntl.h>
-#include <psp2/kernel/clib.h>
-#include <psp2/kernel/processmgr.h>
-#include <psp2/kernel/threadmgr.h>
-#include <psp2/appmgr.h>
-#include <psp2/apputil.h>
-#include <psp2/ctrl.h>
-#include <psp2/power.h>
-#include <psp2/rtc.h>
-#include <psp2/touch.h>
+#include <vitasdk.h>
 #include <kubridge.h>
 #include <vitashark.h>
 #include <vitaGL.h>
@@ -654,7 +644,8 @@ enum MethodIDs {
   STOP_ALL_SOUNDS,
   UNLOAD_SOUND,
   IS_PLAYING,
-  IS_VBO_SUPPORTED
+  IS_VBO_SUPPORTED,
+  GET_LANGUAGE
 } MethodIDs;
 
 typedef struct {
@@ -674,6 +665,7 @@ static NameToMethodID name_to_method_ids[] = {
   { "unloadSound", UNLOAD_SOUND },
   { "isPlaying", IS_PLAYING },
   { "isVBOSupported", IS_VBO_SUPPORTED },
+  { "getLanguage", GET_LANGUAGE },
 };
 
 int GetMethodID(void *env, void *class, const char *name, const char *sig) {
@@ -761,6 +753,8 @@ int GetBooleanField(void *env, void *obj, int fieldID) {
 }
 
 void *CallObjectMethodV(void *env, void *obj, int methodID, uintptr_t *args) {
+  int lang = -1;
+
   switch (methodID) {
   case GET_APK_PATH:
   case GET_EXTERNAL_STORAGE_PATH:
@@ -768,6 +762,29 @@ void *CallObjectMethodV(void *env, void *obj, int methodID, uintptr_t *args) {
     return DATA_PATH;
   case PLAY_SOUND:
     return audio_player_play(args[0], args[1]);
+  case GET_LANGUAGE:
+    sceAppUtilSystemParamGetInt(SCE_SYSTEM_PARAM_ID_LANG, &lang);
+    switch (lang) {
+    case SCE_SYSTEM_PARAM_LANG_ITALIAN:
+      return "it";
+    case SCE_SYSTEM_PARAM_LANG_GERMAN:
+      return "de";
+    case SCE_SYSTEM_PARAM_LANG_KOREAN:
+      return "ko";
+    case SCE_SYSTEM_PARAM_LANG_CHINESE_S:
+    case SCE_SYSTEM_PARAM_LANG_CHINESE_T:
+      return "ch";
+    case SCE_SYSTEM_PARAM_LANG_SPANISH:
+      return "es";
+    case SCE_SYSTEM_PARAM_LANG_FRENCH:
+      return "fr";
+    case SCE_SYSTEM_PARAM_LANG_POLISH:
+      return "pl";
+    case SCE_SYSTEM_PARAM_LANG_DUTCH:
+      return "nl";
+    default:
+      return NULL;
+    }
   default:
     return NULL;
   }
@@ -807,6 +824,12 @@ enum {
 };
 
 int main(int argc, char *argv[]) {
+  SceAppUtilInitParam init_param;
+  SceAppUtilBootParam boot_param;
+  memset(&init_param, 0, sizeof(SceAppUtilInitParam));
+  memset(&boot_param, 0, sizeof(SceAppUtilBootParam));
+  sceAppUtilInit(&init_param, &boot_param);
+  
   sceTouchSetSamplingState(SCE_TOUCH_PORT_FRONT, SCE_TOUCH_SAMPLING_STATE_START);
 
   scePowerSetArmClockFrequency(444);
