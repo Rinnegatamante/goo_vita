@@ -653,7 +653,8 @@ enum MethodIDs {
   STOP_SOUND,
   STOP_ALL_SOUNDS,
   UNLOAD_SOUND,
-  IS_PLAYING
+  IS_PLAYING,
+  IS_VBO_SUPPORTED
 } MethodIDs;
 
 typedef struct {
@@ -672,6 +673,7 @@ static NameToMethodID name_to_method_ids[] = {
   { "stopAllSounds", STOP_ALL_SOUNDS },
   { "unloadSound", UNLOAD_SOUND },
   { "isPlaying", IS_PLAYING },
+  { "isVBOSupported", IS_VBO_SUPPORTED },
 };
 
 int GetMethodID(void *env, void *class, const char *name, const char *sig) {
@@ -775,6 +777,8 @@ int CallBooleanMethodV(void *env, void *obj, int methodID, uintptr_t *args) {
   switch (methodID) {
   case IS_PLAYING:
     return (args[0] > 1) ? audio_player_is_playing(args[0]) : 0;
+  case IS_VBO_SUPPORTED:
+    return 1;
   default:
     return 0;
   }
