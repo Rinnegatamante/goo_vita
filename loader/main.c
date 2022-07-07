@@ -395,7 +395,7 @@ int close_hook(int fd) {
     write(fd, save_buf, save_ptr);
     free(save_buf);
     is_pers2 = 0;
-	save_ptr = 0;
+    save_ptr = 0;
   }
   return close(fd);
 }
