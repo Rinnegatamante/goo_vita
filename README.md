@@ -17,7 +17,7 @@ This wrapper works ONLY with the paid (now discontinued) version of World of Goo
 
 - Updated to latest vitaGL build.
 - Updated to latest so loader build.
-- Added trophies support.
+- Added trophies support. (requires NoTrpDrm)
 
 ### v1.1
 
@@ -50,6 +50,7 @@ In order to properly install the game, you'll have to follow these steps precise
 - Obtain your copy of *World of Goo* legally for Android in form of an `.apk` file. [You can get all the required files directly from your phone](https://stackoverflow.com/questions/11012976/how-do-i-get-the-apk-of-an-installed-app-without-root-access) or by using an apk extractor you can find in the play store.
 - Open the apk with your zip explorer and extract the file `libworldofgoo.so` from the `lib/armeabi-v7a` folder to `ux0:data/goo`. 
 - Extract the folders `res` and `properties` from the `assets` folder inside `ux0:data/goo`.
+- **Optional**: For trophies to be unlockable, install [NoTrpDRM](https://github.com/Rinnegatamante/NoTrpDrm).
 
 ## Build Instructions (For Developers)
 
