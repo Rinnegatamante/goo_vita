@@ -875,7 +875,7 @@ int main(int argc, char *argv[]) {
   if (!file_exists("ur0:/data/libshacccg.suprx") && !file_exists("ur0:/data/external/libshacccg.suprx"))
     fatal_error("Error libshacccg.suprx is not installed.");
 
-  if (so_load(&goo_mod, SO_PATH, LOAD_ADDRESS) < 0)
+  if (so_file_load(&goo_mod, SO_PATH, LOAD_ADDRESS) < 0)
     fatal_error("Error could not load %s.", SO_PATH);
 
   so_relocate(&goo_mod);
