@@ -41,6 +41,7 @@
 #include "dialog.h"
 #include "so_util.h"
 #include "sha1.h"
+#include "trophies.h"
 
 uint32_t audio_player_play(char *path, uint8_t loop);
 int audio_player_is_playing(int m);
@@ -300,10 +301,15 @@ int DoesFileExistInApk(void *this, const char *file) {
   return file_exists(real_path) ? 1 : 0;
 }
 
+void unlockAchievement(void *this, int id) {
+	trophies_unlock(id + 1);
+}
+
 void patch_game(void) {
   hook_addr(so_symbol(&goo_mod, "__aeabi_ldiv0"), (uintptr_t)&__aeabi_ldiv0);
   hook_addr(so_symbol(&goo_mod, "_ZN3Boy14AndroidStorage18DoesFileExistInApkEPKc"), (uintptr_t)&DoesFileExistInApk);
   hook_addr(so_symbol(&goo_mod, "_ZN3Boy18AndroidEnvironment8debugLogEPKcz"), (uintptr_t)&ret0);
+  hook_addr(so_symbol(&goo_mod, "_ZN3Boy12OpenFeintMgr17reportAchievementEi"), (uintptr_t)&unlockAchievement);
 }
 
 extern void *__aeabi_atexit;
@@ -400,6 +406,10 @@ int close_hook(int fd) {
   return close(fd);
 }
 
+extern const char *BIONIC_ctype_;
+extern const short *BIONIC_tolower_tab_;
+extern const short *BIONIC_toupper_tab_;
+
 static so_default_dynlib default_dynlib[] = {
   { "__aeabi_atexit", (uintptr_t)&__aeabi_atexit },
   { "__android_log_print", (uintptr_t)&__android_log_print },
@@ -413,7 +423,9 @@ static so_default_dynlib default_dynlib[] = {
   { "__sF", (uintptr_t)&__sF_fake },
   { "__stack_chk_fail", (uintptr_t)&__stack_chk_fail },
   { "__stack_chk_guard", (uintptr_t)&__stack_chk_guard_fake },
-  { "_ctype_", (uintptr_t)&__ctype_ },
+  { "_ctype_", (uintptr_t)&BIONIC_ctype_},
+  { "_tolower_tab_", (uintptr_t)&BIONIC_tolower_tab_},
+  { "_toupper_tab_", (uintptr_t)&BIONIC_toupper_tab_},
   { "abort", (uintptr_t)&abort },
   // { "accept", (uintptr_t)&accept },
   { "acos", (uintptr_t)&acos },
@@ -890,6 +902,15 @@ int main(int argc, char *argv[]) {
   
   vglSetupGarbageCollector(127, 0x20000);
   vglInitExtended(0, SCREEN_W, SCREEN_H, MEMORY_VITAGL_THRESHOLD_MB * 1024 * 1024, SCE_GXM_MULTISAMPLE_4X);
+
+  // Initing trophy system
+  SceIoStat st;
+  int r = trophies_init();
+  if (r < 0 && sceIoGetstat(TROPHIES_FILE, &st) < 0) {
+    FILE *f = fopen(TROPHIES_FILE, "w");
+    fclose(f);
+    warning("This game features unlockable trophies but NoTrpDrm is not installed. If you want to be able to unlock trophies, please install it.");
+  }
 
   memset(fake_vm, 'A', sizeof(fake_vm));
   *(uintptr_t *)(fake_vm + 0x00) = (uintptr_t)fake_vm; // just point to itself...

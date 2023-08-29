@@ -23,6 +23,8 @@ add_executable(GOO
   loader/dialog.c
   loader/so_util.c
   loader/sha1.c
+  loader/trophies.c
+  loader/ctype_patch.c
   loader/audio_player.cpp
 )
 
@@ -38,6 +40,8 @@ target_link_libraries(GOO
   vitashark
   soloud
   mathneon
+  SceShaccCgExt
+  taihen_stub
   kubridge_stub
   SceAppMgr_stub
   SceAppUtil_stub
@@ -57,6 +61,8 @@ target_link_libraries(GOO
   ScePower_stub
   SceTouch_stub
   SceVshBridge_stub
+  SceMotion_stub
+  SceNpTrophy_stub
 )
 
 vita_create_self(eboot.bin GOO UNSAFE)
@@ -67,6 +73,7 @@ vita_create_vpk(GOO.vpk ${VITA_TITLEID} eboot.bin
        ${CMAKE_SOURCE_DIR}/livearea/default_gate.png sce_sys/livearea/contents/default_gate.png
        ${CMAKE_SOURCE_DIR}/livearea/bg0.png sce_sys/livearea/contents/bg0.png
        ${CMAKE_SOURCE_DIR}/livearea/template.xml sce_sys/livearea/contents/template.xml
+	   ${CMAKE_SOURCE_DIR}/livearea/TROPHY.TRP sce_sys/trophy/GOOO00001_00/TROPHY.TRP
 )
 
 add_custom_target(copy

@@ -10,6 +10,7 @@
 
 #define DATA_PATH "ux0:data/goo"
 #define SO_PATH DATA_PATH "/" "libworldofgoo.so"
+#define TROPHIES_FILE "ux0:data/goo/trophies.chk"
 
 #define SCREEN_W 960
 #define SCREEN_H 544

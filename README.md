@@ -7,7 +7,17 @@ This is a wrapper/port of <b>World of Goo</b> for the *PS Vita*.
 The port works by loading the official Android ARMv7 executables in memory, resolving its imports with native functions and patching it in order to properly run.
 By doing so, it's basically as if we emulate a minimalist Android environment in which we run natively the executable as is.
 
+## Disclaimer
+
+This wrapper works ONLY with the paid (now discontinued) version of World of Goo. World of Goo Remastered (published by Netflix) is NOT supported.
+
 ## Changelog
+
+### v1.2
+
+- Updated to latest vitaGL build.
+- Updated to latest so loader build.
+- Added trophies support.
 
 ### v1.1
 
