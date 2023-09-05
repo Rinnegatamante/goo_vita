@@ -13,6 +13,10 @@ This wrapper works ONLY with the paid (now discontinued) version of World of Goo
 
 ## Changelog
 
+### v1.2.1
+
+- Updated trophies icons to hi-res versions.
+
 ### v1.2
 
 - Updated to latest vitaGL build.
