@@ -127,7 +127,7 @@ int ret1(void) {
   return 1;
 }
 
-int clock_gettime(int clk_ik, struct timespec *t) {
+int clock_gettime(clockid_t clk_ik, struct timespec *t) {
   struct timeval now;
   int rv = gettimeofday(&now, NULL);
   if (rv)
@@ -294,6 +294,8 @@ int GetEnv(void *vm, void **env, int r2) {
   *env = fake_env;
   return 0;
 }
+
+int file_exists(const char *path);
 
 int DoesFileExistInApk(void *this, const char *file) {
   char real_path[128];
@@ -805,7 +807,7 @@ void *CallObjectMethodV(void *env, void *obj, int methodID, uintptr_t *args) {
   case GET_INTERNAL_STORAGE_PATH:
     return DATA_PATH;
   case PLAY_SOUND:
-    return audio_player_play(args[0], args[1]);
+    return (void *)(uintptr_t)audio_player_play((char *)args[0], args[1]);
   case GET_LANGUAGE:
     sceAppUtilSystemParamGetInt(SCE_SYSTEM_PARAM_ID_LANG, &lang);
     switch (lang) {

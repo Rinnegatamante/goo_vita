@@ -10,6 +10,9 @@ endif()
 
 project(GOO C CXX)
 include("${VITASDK}/share/vita.cmake" REQUIRED)
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(sndfile REQUIRED IMPORTED_TARGET sndfile)
+pkg_check_modules(vorbisfile REQUIRED IMPORTED_TARGET vorbisfile)
 set(VITA_APP_NAME "World of Goo")
 set(VITA_TITLEID  "WRLDOFGOO")
 set(VITA_VERSION  "01.00")
@@ -28,8 +31,11 @@ add_executable(GOO
   loader/audio_player.cpp
 )
 
+
 target_link_libraries(GOO
-  -Wl,--whole-archive pthread -Wl,--no-whole-archive
+  -pthread
+  PkgConfig::sndfile
+  PkgConfig::vorbisfile
   m
   z
   stdc++
@@ -55,7 +61,6 @@ target_link_libraries(GOO
   SceRazorCapture_stub
   SceFios2_stub
   SceGxm_stub
-  SceLibcBridge_stub
   SceShaccCg_stub
   SceSysmodule_stub
   ScePower_stub
@@ -80,3 +85,5 @@ add_custom_target(copy
   COMMAND cp eboot.bin D:/app/${VITA_TITLEID}/eboot.bin
   DEPENDS eboot.bin
 )
+
+set_property(SOURCE loader/so_util.c APPEND PROPERTY COMPILE_OPTIONS -Wno-error=return-mismatch -Wno-error=incompatible-pointer-types)
